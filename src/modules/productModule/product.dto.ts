@@ -1,5 +1,5 @@
 import { IsInt, IsString, IsOptional } from 'class-validator';
-export class Product {
+export class ProductDTO {
   @IsOptional()
   @IsInt()
   id?: number;
