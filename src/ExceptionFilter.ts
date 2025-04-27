@@ -3,29 +3,62 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  HttpStatus,
+  NotFoundException,
+  ConflictException,
+  UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Response } from 'express';
 
 @Catch()
-export class GlobalExceptionFilter implements ExceptionFilter {
+export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    if (exception instanceof BadRequestException) {
+      return response.status(exception.getStatus()).json({
+        success: false,
+        message: 'Bad request: ' + exception.message,
+        data: exception.getResponse(),
+      });
+    }
 
-    const message =
-      exception instanceof HttpException
-        ? exception.message
-        : 'Something went wrong';
+    if (exception instanceof UnauthorizedException) {
+      return response.status(exception.getStatus()).json({
+        success: false,
+        message: 'Unauthorized access: ' + exception.message,
+        data: exception.getResponse(),
+      });
+    }
 
-    response.status(status).json({
+    if (exception instanceof ConflictException) {
+      return response.status(exception.getStatus()).json({
+        success: false,
+        message: 'Conflict occurred: ' + exception.message,
+        data: exception.getResponse(),
+      });
+    }
+
+    if (exception instanceof NotFoundException) {
+      return response.status(exception.getStatus()).json({
+        success: false,
+        message: 'Resource not found: ' + exception.message,
+        data: exception.getResponse(),
+      });
+    }
+
+    if (exception instanceof HttpException) {
+      return response.status(exception.getStatus()).json({
+        success: false,
+        message: 'Bad request: ' + exception.message,
+        data: exception.getResponse(),
+      });
+    }
+
+    return response.status(500).json({
       success: false,
-      message,
+      message: 'Internal server error: Something went wrong.',
       data: null,
     });
   }
