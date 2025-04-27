@@ -11,7 +11,7 @@ export class Roles {
   @Prop({
     required: true,
   })
-  role_name: string;
+  roleName: string;
 }
 
 export const RolesSchema = SchemaFactory.createForClass(Roles);
