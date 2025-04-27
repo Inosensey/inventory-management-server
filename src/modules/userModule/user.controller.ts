@@ -1,15 +1,16 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { Types } from 'mongoose';
 
 // Service
 import { UserService } from './user.service';
 
 // Dto
-import { CreateUserDTO, SelectUserDTO, UserListResponseDto } from './user.dto';
-
-// Types
-import { response, userInfo } from 'src/types/genericTypes';
+import {
+  CreateUserDTO,
+  UserCredentialsDTO,
+  UserListResponseDto,
+} from './user.dto';
 
 @Controller('users')
 export class UserController {
@@ -18,40 +19,105 @@ export class UserController {
   @Get()
   async getUsers() {
     const users = await this.userService.getUsers();
-    return plainToInstance(SelectUserDTO, users, {
-      excludeExtraneousValues: true,
-    });
+    const response = plainToInstance(
+      UserListResponseDto,
+      {
+        success: true,
+        data: [users],
+        message: '',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+    return response;
   }
 
   @Get(':id')
-  getUserById(@Param('id') id: string) {
-    return this.userService.getUserById(id);
+  async getUserById(@Param('id') id: string) {
+    const user = await this.userService.getUserById(id);
+    const response = plainToInstance(
+      UserListResponseDto,
+      {
+        success: true,
+        data: [user],
+        message: '',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+
+    return response;
   }
 
-  @Post()
-  async createUser(@Body() user: CreateUserDTO) {
-    const result = await this.userService.createUser(user);
+  @Post('/sign-up')
+  async createUser(
+    @Body()
+    user: CreateUserDTO,
+  ) {
+    const result = await this.userService.signUp(user);
 
-    const userInfo: response<userInfo[]> = {
-      success: true,
-      data: [
-        {
-          id: result._id instanceof Types.ObjectId ? result._id.toString() : '',
-          roleId:
-            result.roleId instanceof Types.ObjectId
-              ? result.roleId.toString()
-              : '',
-          email: result.email,
-          username: result.username,
-          firstName: result.firstName,
-          lastName: result.lastName,
-        },
-      ],
-      message: '',
-    };
+    const response = plainToInstance(
+      UserListResponseDto,
+      {
+        success: true,
+        data: [result],
+        message: '',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
 
-    return plainToInstance(UserListResponseDto, userInfo, {
-      excludeExtraneousValues: true,
-    });
+    return response;
+  }
+
+  @Post('auth/sign-in')
+  async signInUser(
+    @Body() credentials: UserCredentialsDTO,
+    // @Res() res: Response,
+  ) {
+    const result = await this.userService.signIn(credentials);
+
+    // res.cookie('token', result.token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',
+    //   sameSite: 'none',
+    //   maxAge: 3600000, // 1 hour
+    // });
+
+    const response = plainToInstance(
+      UserListResponseDto,
+      {
+        success: true,
+        data: [result.user],
+        message: '',
+        token: result.token,
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+
+    return response;
+  }
+
+  @Delete('/delete-user')
+  async deleteUserByEmail(@Body('email') email: string) {
+    const result = await this.userService.deleteUserByEmail(email);
+    const response = plainToInstance(
+      UserListResponseDto,
+      {
+        success: true,
+        data: [result],
+        message: '',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+
+    return response;
   }
 }
