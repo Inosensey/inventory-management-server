@@ -61,8 +61,7 @@ export class UserService {
             },
           },
         ]);
-
-      if (!user) {
+      if (!user[0]) {
         throw new NotFoundException('Invalid Credentials!');
       }
 
@@ -75,9 +74,12 @@ export class UserService {
         throw new NotFoundException('Invalid Credentials!');
       }
 
-      console.log(user[0].role![0].roleName);
       const token = jwt.sign(
-        { userId: user[0]._id.toString(), roleId: user[0].role![0].roleName },
+        {
+          userId: user[0]._id.toString(),
+          roleId:
+            user[0].role && user[0].role[0] ? user[0].role[0].roleName : '',
+        },
         process.env.JWT_SECRET ||
           '9c7708264b359ca23c76e30114cf405ec9c6c1c69230acbb1284a578cbe392a7',
         { expiresIn: '1d' },
