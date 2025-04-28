@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 
@@ -76,18 +84,18 @@ export class UserController {
   @Post('auth/sign-in')
   async signInUser(
     @Body() credentials: UserCredentialsDTO,
-    // @Res() res: Response,
+    @Res({ passthrough: true }) response: Response,
   ) {
     const result = await this.userService.signIn(credentials);
 
-    // res.cookie('token', result.token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === 'production',
-    //   sameSite: 'none',
-    //   maxAge: 3600000, // 1 hour
-    // });
+    response.cookie('token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none',
+      maxAge: 3600000,
+    });
 
-    const response = plainToInstance(
+    const resultDTO = plainToInstance(
       UserListResponseDto,
       {
         success: true,
@@ -100,7 +108,25 @@ export class UserController {
       },
     );
 
-    return response;
+    return resultDTO;
+  }
+
+  @Post('auth/sign-out')
+  signOutUser(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('token');
+    const result = plainToInstance(
+      UserListResponseDto,
+      {
+        success: true,
+        data: [],
+        message: 'User signed out successfully',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+
+    return result;
   }
 
   @Delete('/delete-user')
