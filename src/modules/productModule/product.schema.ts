@@ -12,9 +12,9 @@ export class Products {
   name: string;
 
   @Prop({ required: true })
-  category: string;
+  price: number;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   description: string;
 
   @Prop({
@@ -22,7 +22,7 @@ export class Products {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'product_categories',
   })
-  price: product_categories;
+  category: product_categories;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Products);
