@@ -3,9 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -26,8 +26,31 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  getProducts() {
-    return this.productService.getProducts();
+  async getProducts(
+    @Query()
+    query: {
+      currentPage?: string;
+      setPageSize?: string;
+    },
+  ) {
+    const result = await this.productService.getProducts(
+      query.currentPage,
+      query.setPageSize,
+    );
+
+    const response = plainToInstance(
+      ProductResponseDto,
+      {
+        success: true,
+        data: [result],
+        message: '',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+
+    return response;
   }
 
   @Post('/add-product')
@@ -46,6 +69,24 @@ export class ProductController {
       },
     );
 
+    return response;
+  }
+
+  @Post('/bulk-add-products')
+  @UseGuards(RoleGuard)
+  async bulkAddProducts(@Body() products: CreateProductDTO[]) {
+    const result = await this.productService.bulkCreateProducts(products);
+    const response = plainToInstance(
+      ProductResponseDto,
+      {
+        success: true,
+        data: [result],
+        message: '',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
     return response;
   }
 
@@ -69,8 +110,49 @@ export class ProductController {
 
   @Delete('/delete-product')
   @UseGuards(RoleGuard)
-  deleteProduct(@Param('productId') productId: string) {
-    const test = `delete product ${productId}`;
-    return test;
+  deleteProduct(@Body() body: { productId: string }) {
+    const result = this.productService.deleteProduct(body.productId);
+    const response = plainToInstance(
+      ProductResponseDto,
+      {
+        success: true,
+        data: [result],
+        message: '',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+    return response;
+  }
+
+  @Get('/search-product')
+  async searchProduct(
+    @Query()
+    query: {
+      name?: string;
+      description?: string;
+      currentPage?: string;
+      setPageSize?: string;
+    },
+  ) {
+    const result = await this.productService.searchProduct(
+      query.name || '',
+      query.description || '',
+      query.currentPage,
+      query.setPageSize,
+    );
+    const response = plainToInstance(
+      ProductResponseDto,
+      {
+        success: true,
+        data: [result],
+        message: '',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+    return response;
   }
 }
