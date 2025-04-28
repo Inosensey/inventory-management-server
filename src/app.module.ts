@@ -9,7 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from '@modules/userModule/user.module';
 import { ProductModule } from '@modules/productModule/product.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ProductCatModule } from '@modules/productCatModule/procutCat.module';
+import { ProductCatModule } from '@modules/productCatModule/productCat.module';
 
 @Module({
   imports: [
