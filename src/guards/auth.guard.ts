@@ -26,15 +26,21 @@ export class RoleGuard implements CanActivate {
       throw new ForbiddenException('User not authenticated.');
     }
 
-    if (method === 'PUT') {
+    if (method === 'POST') {
       if (user.roleId !== 'Admin') {
-        throw new ForbiddenException('Only Admins can update a product.');
+        throw new ForbiddenException('Only Admins can Create a product.');
+      }
+    }
+
+    if (method === 'PUT') {
+      if (user.roleId !== 'Auditor') {
+        throw new ForbiddenException('Only Auditors can update a product.');
       }
     }
 
     if (method === 'DELETE') {
-      if (user.roleId !== 'Auditor') {
-        throw new ForbiddenException('Only Auditor can delete a product.');
+      if (user.roleId !== 'Admin') {
+        throw new ForbiddenException('Only Admins can delete a product.');
       }
     }
 
