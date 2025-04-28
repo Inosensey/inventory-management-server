@@ -29,15 +29,15 @@ export class ProductCatController {
     return response;
   }
 
-  @Post('/bulk-add-products')
+  @Post('/bulk-add-categories')
   async bulkAddProducts(@Body() products: ProductCatInfoDTO[]) {
     const productCat = await this.ProductCatService.bulkAddCategories(products);
     const response = plainToInstance(
       ProductCatResponseDto,
       {
         success: true,
-        data: [productCat],
-        message: 'Products added successfully',
+        data: productCat,
+        message: 'Categories added successfully',
       },
       {
         excludeExtraneousValues: true,
