@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import {
   HttpException,
   Injectable,
@@ -9,8 +9,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Users } from './user.schema';
-import { CreateUserDTO, UserCredentialsDTO } from './user.dto';
-
+import { CreateUserDTO, SelectUserDTO, UserCredentialsDTO } from './user.dto';
 @Injectable()
 export class UserService {
   constructor(@InjectModel('User') private userModel: Model<Users>) {}
@@ -48,9 +47,20 @@ export class UserService {
 
   async signIn(credentials: UserCredentialsDTO) {
     try {
-      const user = await this.userModel
-        .findOne({ email: credentials.email })
-        .select('+password');
+      const user: Array<SelectUserDTO & { _id: string }> =
+        await this.userModel.aggregate([
+          {
+            $match: { email: credentials.email },
+          },
+          {
+            $lookup: {
+              from: 'user_roles',
+              localField: 'roleId',
+              foreignField: '_id',
+              as: 'role',
+            },
+          },
+        ]);
 
       if (!user) {
         throw new NotFoundException('Invalid Credentials!');
@@ -58,21 +68,22 @@ export class UserService {
 
       const passwordIsValid = await bcrypt.compare(
         credentials.password,
-        user.password,
+        user[0].password,
       );
 
       if (!passwordIsValid) {
         throw new NotFoundException('Invalid Credentials!');
       }
 
+      console.log(user[0].role![0].roleName);
       const token = jwt.sign(
-        { userId: user._id, roleId: user.roleId },
+        { userId: user[0]._id.toString(), roleId: user[0].role![0].roleName },
         process.env.JWT_SECRET ||
           '9c7708264b359ca23c76e30114cf405ec9c6c1c69230acbb1284a578cbe392a7',
         { expiresIn: '1d' },
       );
 
-      return { user, token };
+      return { user: user[0], token: token };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
