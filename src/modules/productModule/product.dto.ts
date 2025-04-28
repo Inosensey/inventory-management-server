@@ -1,9 +1,9 @@
 import { Expose, Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
-  IsInt,
   IsMongoId,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
@@ -22,7 +22,7 @@ export class CreateProductDTO {
   description: string;
 
   @IsNotEmpty()
-  @IsInt()
+  @IsNumber()
   price: number;
 }
 
@@ -43,7 +43,7 @@ export class UpdateProductDTO {
   description: string;
 
   @IsNotEmpty()
-  @IsInt()
+  @IsNumber()
   price: number;
 }
 
@@ -60,11 +60,17 @@ export class SelectProductDTO {
   @Expose()
   name: string;
 
+  @Expose()
+  @Transform(({ obj }: { obj: { category: string } }) =>
+    obj.category.toString(),
+  )
+  category: string;
+
   @IsOptional()
   @ValidateNested()
   @Type(() => categoryDTO)
   @Expose()
-  category?: categoryDTO[];
+  categoryInfo?: categoryDTO[];
 
   @Expose()
   price: number;
