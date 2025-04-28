@@ -1,12 +1,19 @@
 import { Expose, Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsMongoId,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
 
 export class ProductCatInfoDTO {
+  @IsOptional()
+  @IsMongoId()
+  @Expose()
+  _id?: string;
+
   @IsNotEmpty()
   @IsString()
   @Expose()
