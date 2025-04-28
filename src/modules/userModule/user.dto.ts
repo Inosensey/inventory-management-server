@@ -69,6 +69,11 @@ export class UpdateUserDTO {
   roleId: string;
 }
 
+class RoleDTO {
+  @Expose()
+  roleName: string;
+}
+
 export class SelectUserDTO {
   @Expose()
   @Transform(({ obj }: { obj: { _id: string } }) => obj._id.toString())
@@ -86,9 +91,18 @@ export class SelectUserDTO {
   @Expose()
   lastName: string;
 
+  @Exclude()
+  password: string;
+
   @Expose()
   @Transform(({ obj }: { obj: { roleId: string } }) => obj.roleId.toString())
   roleId: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => RoleDTO)
+  @Expose()
+  role?: RoleDTO[];
 }
 
 export class UserListResponseDto {
