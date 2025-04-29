@@ -97,7 +97,7 @@ npm run test:e2e
 ---
 
 ### **Base URL:**  
-`/users`
+`https://inventory-management-server-lh5i.onrender.com/users`
 
 ---
 
@@ -215,7 +215,7 @@ npm run test:e2e
 
 ### **Base URL:**
 
-`/product-categories`
+`https://inventory-management-server-lh5i.onrender.com/product-categories`
 
 ### **Endpoints:**
 
@@ -270,7 +270,7 @@ npm run test:e2e
 
 ### **Base URL:**
 
-`/products`
+`https://inventory-management-server-lh5i.onrender.com/products`
 
 ### **Endpoints:**
 
@@ -293,7 +293,7 @@ npm run test:e2e
   {
     "name": "string",
     "description": "string",
-    "price": number,
+    "price": "number",
     "category": "categoryId"
   }
   ```
@@ -310,10 +310,9 @@ npm run test:e2e
     {
       "name": "string",
       "description": "string",
-      "price": number,
+      "price": "number",
       "category": "categoryId"
     },
-    ...
   ]
   ```
 - **Description:** Adds multiple products in a single request.
@@ -329,7 +328,7 @@ npm run test:e2e
     "id": "productId",
     "name": "string",
     "description": "string",
-    "price": number,
+    "price": "number",
     "category": "categoryId"
   }
   ```
@@ -389,7 +388,7 @@ This project is **UNLICENSED** and intended for internal or private use only.
 
 ## 👤 Author
 
-> Name: Philip Mathew  
+> Name: Philip Mathew Dingcong  
 > Email: dingcong.bae@gmail.com
 
 ---
