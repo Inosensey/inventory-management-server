@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Res,
@@ -82,6 +83,7 @@ export class UserController {
   }
 
   @Post('auth/sign-in')
+  @HttpCode(200)
   async signInUser(
     @Body() credentials: UserCredentialsDTO,
     @Res({ passthrough: true }) response: Response,
