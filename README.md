@@ -114,7 +114,17 @@ npm run test:e2e
 
 ---
 
-#### **2. Get User by ID**
+---
+
+#### **2. Get All User Roles**
+
+- **Method:** `GET`
+- **URL:** `/users/roles`
+- **Description:** Retrieves a list of roles.
+
+---
+
+#### **3. Get User by ID**
 
 - **Method:** `GET`
 - **URL:** `/users/:id`
@@ -124,7 +134,7 @@ npm run test:e2e
 
 ---
 
-#### **3. Create User (Sign Up)**
+#### **4. Create User (Sign Up)**
 
 - **Method:** `POST`
 - **URL:** `/users/sign-up`
@@ -143,7 +153,7 @@ npm run test:e2e
 
 ---
 
-#### **4. Sign In User (Login)**
+#### **5. Sign In User (Login)**
 
 - **Method:** `POST`
 - **URL:** `/users/auth/sign-in`
@@ -158,7 +168,7 @@ npm run test:e2e
 
 ---
 
-#### **5. Sign Out User (Logout)**
+#### **6. Sign Out User (Logout)**
 
 - **Method:** `POST`
 - **URL:** `/users/auth/sign-out`
@@ -166,7 +176,7 @@ npm run test:e2e
 
 ---
 
-#### **6. Delete User by Email**
+#### **7. Delete User by Email**
 
 - **Method:** `DELETE`
 - **URL:** `/users/delete-user`
