@@ -54,6 +54,7 @@ export class ProductController {
   }
 
   @Post('/add-product')
+  @UseGuards(RoleGuard)
   async addProduct(@Body() product: CreateProductDTO) {
     const result = await this.productService.createProduct(product);
 
