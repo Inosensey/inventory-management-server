@@ -97,7 +97,7 @@ npm run test:e2e
 ---
 
 ### **Base URL:**  
-`/users`
+`https://inventory-management-server-lh5i.onrender.com/users`
 
 ---
 
@@ -215,7 +215,7 @@ npm run test:e2e
 
 ### **Base URL:**
 
-`/product-categories`
+`https://inventory-management-server-lh5i.onrender.com/product-categories`
 
 ### **Endpoints:**
 
@@ -270,7 +270,7 @@ npm run test:e2e
 
 ### **Base URL:**
 
-`/products`
+`https://inventory-management-server-lh5i.onrender.com/products`
 
 ### **Endpoints:**
 
