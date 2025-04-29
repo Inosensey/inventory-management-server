@@ -13,9 +13,15 @@ import {
   IsUsernameUniqueConstraint,
 } from 'src/customValidator/mongodb-input.validator';
 import { AuthMiddleware } from 'src/middleware/auth.middleware';
+import { User_RolesSchema } from '@modules/rolesModule/roles.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'User_Roles', schema: User_RolesSchema },
+    ]),
+  ],
   controllers: [UserController],
   providers: [UserService, IsUsernameUniqueConstraint, IsEmailUniqueConstraint],
 })
