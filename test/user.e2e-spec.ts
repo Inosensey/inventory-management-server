@@ -6,19 +6,14 @@ import { UserModule } from './../src/modules/userModule/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { CreateUserDTO } from '@modules/userModule/user.dto';
-// import {
-//   IsEmailUniqueConstraint,
-//   IsUsernameUniqueConstraint,
-// } from 'src/customValidator/mongodb-input.validator';
-// import { UserService } from '../src/modules/userModule/user.service';
-// import { UserSchema } from '@modules/userModule/user.schema';
-// import { UserController } from '@modules/userModule/user.controller';
 import { useContainer } from 'class-validator';
 import { AllExceptionsFilter } from 'src/ExceptionFilter';
+import * as cookieParser from 'cookie-parser';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication<App>;
   let newUser: CreateUserDTO;
+  let cookie: string;
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
@@ -30,15 +25,26 @@ describe('UserController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe());
     app.useGlobalFilters(new AllExceptionsFilter());
     useContainer(app.select(UserModule), { fallbackOnErrors: true });
     await app.init();
+
+    const response = await request(app.getHttpServer())
+      .post('/users/auth/sign-in')
+      .send({
+        email: 'dingcong.bae@gmail.com',
+        password: 'Inosensey/99',
+      })
+      .expect(200);
+    cookie = response.headers['set-cookie'][0];
   });
 
   it('(url: /users) (GET) returns all users', () => {
     return request(app.getHttpServer())
       .get('/users')
+      .set('Cookie', cookie)
       .expect(200)
       .expect((res) => {
         expect(res.body).toHaveProperty('success', true);
