@@ -10,12 +10,25 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Users } from './user.schema';
 import { CreateUserDTO, SelectUserDTO, UserCredentialsDTO } from './user.dto';
+import { User_Roles } from '@modules/rolesModule/roles.schema';
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('User') private userModel: Model<Users>) {}
+  constructor(
+    @InjectModel('User') private userModel: Model<Users>,
+    @InjectModel('User_Roles') private userRoleModel: Model<User_Roles>,
+  ) {}
 
   async getUsers() {
     return await this.userModel.find().exec();
+  }
+
+  async getUserRoles() {
+    try {
+      const roles = await this.userRoleModel.find().exec();
+      return roles;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async getUserById(id: string) {
