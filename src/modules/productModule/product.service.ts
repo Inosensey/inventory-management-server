@@ -14,7 +14,6 @@ export class ProductService {
   async getProducts(currentPage?: string, setPageSize?: string) {
     const page = currentPage ? parseInt(currentPage) : 1;
     const pageSize = setPageSize ? parseInt(setPageSize) : 10;
-    console.log(pageSize);
     const products = (await this.productModel
       .aggregate([
         {
