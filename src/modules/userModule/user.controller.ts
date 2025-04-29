@@ -42,6 +42,17 @@ export class UserController {
     return response;
   }
 
+  @Get('/roles')
+  async getUserRoles() {
+    const roles = await this.userService.getUserRoles();
+    const response = {
+      success: true,
+      data: roles,
+      message: '',
+    };
+    return response;
+  }
+
   @Get(':id')
   async getUserById(@Param('id') id: string) {
     const user = await this.userService.getUserById(id);
